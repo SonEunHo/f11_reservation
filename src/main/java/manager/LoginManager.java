@@ -76,6 +76,7 @@ public class LoginManager {
             //Set-Cookie: PHPSESSID=jg6oi4qh5e8kn37knjjvl1boa3; path=/
             String cookie = header.toString().split(":")[1].split(";")[0].trim();
             CookieManager.add("PHPSESSID", cookie);
+            System.out.println("cookie:"+cookie);
             break;
         }
 

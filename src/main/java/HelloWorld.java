@@ -18,21 +18,25 @@ public class HelloWorld {
         System.out.println(t.length);
         System.out.println(URLEncoder.encode(str,"UTF-8"));
 
-        LoginManager loginManager = new LoginManager("laedi0701", "8807di");
+        LoginManager loginManager = new LoginManager("니들 아이디 입력해라", "니들 비밀번호 입력해라");
         int statusCode = loginManager.login();
+
+        if(statusCode!= 200)
+            return;
 
         ReserveManager reserveManager = new ReserveManager();
 
         /**
          * EXAMPLE 1
-         * 풋살장 1번 예약하기.
-         * 2018-05-09일 17시부터 2시간동안 예약
+         * 족구장 옆 풋살장 예약하기.
+         * 2018-05-28일 17시부터 2시간동안 예약
+         * 시간단위는 24시간 단위이며 오후 3시는 15시라고 적야함.
          */
         Builder builder = new Builder()
-                .date("2018-05-08")
-                .startHour(15)
-                .useHour(1);
-        reserveManager.reserve(builder.build().makeEntity(Field.FOOTSAL2));
+                .date("2018-05-28")
+                .startHour(17)
+                .useHour(2);
+        reserveManager.reserve(builder.build().makeEntity(Field.FOOTSAL4));
 
         /**
          * EXAMPLE 2

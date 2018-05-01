@@ -14,6 +14,9 @@ import java.net.URLEncoder;
  */
 public class ReserveForm {
 
+    /**
+     * 아래 5개는 건들지 마셈
+     */
     //예약 페이지번호
     private int fc_grno;
     //구장 번호
@@ -27,24 +30,24 @@ public class ReserveForm {
     private String use_time;
 
     private static final String FROM_URL = "/doc/class_info6_reserve.php";
-    //신청자 이름
-    private static final String APNT_PRSN_NM = "손은호";
-    //뭔진 모르지만 계속 1
+    //신청자 이름(수정 필수)
+    private static final String APNT_PRSN_NM = "신청자 이름(ex.김명훈)";
+    //뭔진 모르지만 계속 1 (수정 ㄴㄴ)
     private static final String LCTN_DVCD = "1";
-    //학번 (자동맵핑됨)
+    //학번 (수정 필수)
     private static final String MEMB_ID = "2012105054";
-    //연락처
+    //연락처(수정 필수)
     private static final String HP_NO = "01052858268";
-    //학부
+    //학부(수정 필수)
     private static final String BLNG_NM="컴퓨터학부";
-    //신청자 학번
-    private static final String EMNO="2012105054";
-    //사용 인원
+    //신청자 학번(수정 필수)
+    private static final String EMNO="2016111111";
+    //사용 인원(수정 필수)
     private static final int USER_QTY= 11;
-    //같이 차는 인원들
-    private static final String USER_LIST="손은호 외 10명, 손종영, 성지원, 정문주, 최종현, 김정환, 이민재, 신재민, 박상현, 김명훈, 윤원철";
-    //행사 계획
-    private static final String EVNT_PLAN = "풋살. 뒷정리 깔끔히 하겠습니다.";
+    //같이 차는 인원들(수정 필수)
+    private static final String USER_LIST="손은호 외 10명, 손종영, 성지원, 정문주, 최종현, 김정환, 이민재, 신재민, 박상현, 김명훈, 윤원철. 이상 총 11명";
+    //행사 계획(수정 필수)
+    private static final String EVNT_PLAN = "풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다.";
 
     private ReserveForm(Builder builder) {
         this.tDate = builder.tDate;
@@ -95,7 +98,6 @@ public class ReserveForm {
         }
     }
 
-
     public HttpEntity makeEntity(Field field) throws UnsupportedEncodingException {
         //풋살장1,2,3, 대운동장
         //족구장 옆 풋살장
@@ -103,24 +105,22 @@ public class ReserveForm {
         this.fc_sqno = field.fc_sqno;
 
         StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append("MEMB_ID="+MEMB_ID)
+        strBuilder.append("MEMB_ID="+ URLEncoder.encode(MEMB_ID, "UTF-8"))
                 .append("&fc_grno="+fc_grno)
                 .append("&fc_sqno="+fc_sqno)
                 .append("&fc_time="+fc_time)
-                .append("&tDate="+tDate)
-                .append("&APNT_PRSN_NM="+APNT_PRSN_NM)
+                .append("&tDATE="+tDate)
+                .append("&APNT_PRSN_NM="+URLEncoder.encode(APNT_PRSN_NM,"UTF-8"))
                 .append("&LCTN_DVCD="+LCTN_DVCD)
-                .append("&FROM_URL="+FROM_URL)
+                .append("&FROM_URL="+URLEncoder.encode(FROM_URL,"UTF-8"))
                 .append("&HP_NO="+HP_NO)
-                .append("&BLNG_NM="+BLNG_NM)
+                .append("&BLNG_NM="+URLEncoder.encode(BLNG_NM, "UTF-8"))
                 .append("&EMNO="+EMNO)
                 .append("&use_time="+use_time)
                 .append("&USER_QTY="+USER_QTY)
-                .append("&USER_LIST="+USER_LIST)
-                .append("&EVNT_PLAN="+EVNT_PLAN);
-
-        HttpEntity httpEntity = new StringEntity(URLEncoder.encode(strBuilder.toString(),"UTF-8"));
-//        HttpEntity httpEntity = new StringEntity(strBuilder.toString());
+                .append("&USER_LIST="+URLEncoder.encode(USER_LIST, "UTF-8"))
+                .append("&EVNT_PLAN="+URLEncoder.encode(EVNT_PLAN, "UTF-8"));
+        HttpEntity httpEntity = new StringEntity(strBuilder.toString());
         return httpEntity;
     }
 }
