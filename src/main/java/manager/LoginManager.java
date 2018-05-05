@@ -15,9 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-/**
- * Created by Nano.son on 2018. 5. 1.
- */
 public class LoginManager {
     private static final String URL = "http://sports.knu.ac.kr/pages/member/login_process.php";
     private static final String USER_AGENT = "Mozilla/5.0";
@@ -58,7 +55,7 @@ public class LoginManager {
         String line=null;
         while ((line = reader.readLine()) != null) {
             if(line.contains("아이디나 비밀번호가 틀렸습니다"))
-            return false;
+                return false;
         }
 
         return true;

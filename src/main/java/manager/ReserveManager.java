@@ -1,11 +1,6 @@
 package manager;
 
-import model.ReserveForm;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
-import org.apache.http.ParseException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,31 +10,33 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/**
- * Created by Nano.son on 2018. 5. 1.
- */
+import model.ReserveForm.Builder;
+
 public class ReserveManager {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36";
     private static final String URL = "http://sports.knu.ac.kr/pages/register/facility_reserve.php";
     private static final String REFERER = "https://sports.knu.ac.kr/doc/class_info6_reserve.php";
 
     public boolean reserve(final HttpEntity httpEntity) throws IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = makeRequest();
-        httpPost.setEntity(httpEntity);
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = makeRequest();
+            httpPost.setEntity(httpEntity);
 
-        String line = null;
-        BufferedReader r = new BufferedReader(new InputStreamReader(httpPost.getEntity().getContent()));
-        while((line = r.readLine())!=null)
-            System.out.println(line);
-
-        //요청 날림
-        CloseableHttpResponse response = httpClient.execute(httpPost);
-        if(! checkReserveSuccess(response))
+            //요청 날림
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+            if (!checkReserveSuccess(response))
+                return false;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
             return false;
-
+        }
         System.out.println("[reserve success]");
         return true;
+    }
+
+    public boolean reserve(final Builder builder) throws Exception{
+        return reserve(builder.build().makeEntity());
     }
 
     public boolean checkReserveSuccess(CloseableHttpResponse response) throws IOException{
@@ -48,15 +45,25 @@ public class ReserveManager {
             return false;
 
         String line=null;
+        String result_alert = "";
         BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         while((line = br.readLine()) != null) {
-            System.out.println(line);
-            if(line.contains("선택된 시설이 없습니다"))
+            if(line.contains("선택된 시설이 없습니다")) {
+                System.err.println("선택된 시설이 없습니다");
                 return false;
-            else if (line.contains("해당시간에 예약이 불가합니다"))
+            }
+            else if (line.contains("해당시간에 예약이 불가합니다")) {
+                System.err.println("해당시간에 예약이 불가합니다");
                 return false;
+            }
+            else if (line.contains("해당일자에 예약이 불가합니다")) {
+                System.err.println("해당일자에 예약이 불가합니다");
+                return false;
+            }
+            else if(line.contains("alert("))
+                result_alert = line.split("\"")[1];
         }
-
+        System.out.println(result_alert);
         return true;
     }
 

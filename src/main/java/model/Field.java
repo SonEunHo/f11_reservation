@@ -1,8 +1,5 @@
 package model;
 
-/**
- * Created by Nano.son on 2018. 5. 1.
- */
 public enum Field {
     FOOTSAL1(28,1),
     FOOTSAL2(29,1),

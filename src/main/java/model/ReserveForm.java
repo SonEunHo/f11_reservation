@@ -1,7 +1,5 @@
 package model;
 
-import com.sun.org.glassfish.external.statistics.annotations.Reset;
-import javafx.util.Builder;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 import sun.plugin.dom.exception.InvalidStateException;
@@ -9,9 +7,6 @@ import sun.plugin.dom.exception.InvalidStateException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-/**
- * Created by Nano.son on 2018. 5. 1.
- */
 public class ReserveForm {
 
     /**
@@ -32,17 +27,17 @@ public class ReserveForm {
     //수정 ㄴㄴ
     private static final String FROM_URL = "/doc/class_info6_reserve.php";
     //신청자 이름(수정 필수)
-    private static final String APNT_PRSN_NM = "니 이름";
+    private static final String APNT_PRSN_NM = "이름을 적어주세요";
     //뭔진 모르지만 계속 1 (수정 ㄴㄴ)
     private static final String LCTN_DVCD = "1";
     //학번 (수정 필수) (ex 2012111222)
-    private static final String MEMB_ID = "니 학번";
+    private static final String MEMB_ID = "학번 기입하세요";
     //연락처(수정 필수) (ex 01012345678)
-    private static final String HP_NO = "니 전화번호";
+    private static final String HP_NO = "전화번호 기입하세요";
     //학부
     private static final String BLNG_NM="컴퓨터학부";
     //신청자 학번(수정 필수) (ex 2012111222)
-    private static final String EMNO="니 학번";
+    private static final String EMNO="학번 기입하세요";
     //사용 인원(수정 필수)
     private static final int USER_QTY= 11;
     //같이 차는 인원들(수정 필수)
@@ -54,15 +49,22 @@ public class ReserveForm {
         this.tDate = builder.tDate;
         this.use_time = builder.use_time;
         this.fc_time = builder.fc_time;
+        this.fc_sqno = builder.fc_sqno;
+        this.fc_grno = builder.fc_grno;
     }
 
     public static class Builder {
         String tDate;
         String fc_time;
         String use_time;
+        int fc_grno;
+        int fc_sqno;
+
         private Boolean ready;
 
         public Builder() {
+            fc_grno = -1;
+            fc_sqno = -1;
             ready = false;
         }
 
@@ -85,8 +87,15 @@ public class ReserveForm {
             return this;
         }
 
+        public Builder field(Field field) {
+            this.fc_grno = field.fc_grno;
+            this.fc_sqno = field.fc_sqno;
+            check();
+            return this;
+        }
+
         public void check() {
-            if(tDate!=null && fc_time!=null && use_time!=null)
+            if(tDate!=null && fc_time!=null && use_time!=null && fc_grno >0 && fc_sqno >0)
                 ready = true;
             else
                 ready = false;
@@ -102,25 +111,29 @@ public class ReserveForm {
     public HttpEntity makeEntity(Field field) throws UnsupportedEncodingException {
         //풋살장1,2,3, 대운동장
         //족구장 옆 풋살장
-        this.fc_grno = field.fc_grno;
-        this.fc_sqno = field.fc_sqno;
+        fc_grno = field.fc_grno;
+        fc_sqno = field.fc_sqno;
 
+        return makeEntity();
+    }
+
+    public HttpEntity makeEntity() throws UnsupportedEncodingException {
         StringBuilder strBuilder = new StringBuilder();
         strBuilder.append("MEMB_ID="+ URLEncoder.encode(MEMB_ID, "UTF-8"))
-                .append("&fc_grno="+fc_grno)
-                .append("&fc_sqno="+fc_sqno)
-                .append("&fc_time="+fc_time)
-                .append("&tDATE="+tDate)
-                .append("&APNT_PRSN_NM="+URLEncoder.encode(APNT_PRSN_NM,"UTF-8"))
-                .append("&LCTN_DVCD="+LCTN_DVCD)
-                .append("&FROM_URL="+URLEncoder.encode(FROM_URL,"UTF-8"))
-                .append("&HP_NO="+HP_NO)
-                .append("&BLNG_NM="+URLEncoder.encode(BLNG_NM, "UTF-8"))
-                .append("&EMNO="+EMNO)
-                .append("&use_time="+use_time)
-                .append("&USER_QTY="+USER_QTY)
-                .append("&USER_LIST="+URLEncoder.encode(USER_LIST, "UTF-8"))
-                .append("&EVNT_PLAN="+URLEncoder.encode(EVNT_PLAN, "UTF-8"));
+                  .append("&fc_grno="+fc_grno)
+                  .append("&fc_sqno="+fc_sqno)
+                  .append("&fc_time="+fc_time)
+                  .append("&tDATE="+tDate)
+                  .append("&APNT_PRSN_NM="+URLEncoder.encode(APNT_PRSN_NM,"UTF-8"))
+                  .append("&LCTN_DVCD="+LCTN_DVCD)
+                  .append("&FROM_URL="+URLEncoder.encode(FROM_URL,"UTF-8"))
+                  .append("&HP_NO="+HP_NO)
+                  .append("&BLNG_NM="+URLEncoder.encode(BLNG_NM, "UTF-8"))
+                  .append("&EMNO="+EMNO)
+                  .append("&use_time="+use_time)
+                  .append("&USER_QTY="+USER_QTY)
+                  .append("&USER_LIST="+URLEncoder.encode(USER_LIST, "UTF-8"))
+                  .append("&EVNT_PLAN="+URLEncoder.encode(EVNT_PLAN, "UTF-8"));
         HttpEntity httpEntity = new StringEntity(strBuilder.toString());
         return httpEntity;
     }
