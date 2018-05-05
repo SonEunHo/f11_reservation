@@ -23,38 +23,43 @@ public class ReserveManager {
     private static final String URL = "http://sports.knu.ac.kr/pages/register/facility_reserve.php";
     private static final String REFERER = "https://sports.knu.ac.kr/doc/class_info6_reserve.php";
 
-    public int reserve(final HttpEntity httpEntity) throws IOException {
+    public boolean reserve(final HttpEntity httpEntity) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = makeRequest();
         httpPost.setEntity(httpEntity);
 
-        System.out.println("httpPost:"+httpPost);
-        Header[] headers = httpPost.getAllHeaders();
-        for(Header h : headers)
-            System.out.println(h);
-        System.out.println("entity:");
-
-        String line = "";
+        String line = null;
         BufferedReader r = new BufferedReader(new InputStreamReader(httpPost.getEntity().getContent()));
         while((line = r.readLine())!=null)
             System.out.println(line);
 
         //요청 날림
         CloseableHttpResponse response = httpClient.execute(httpPost);
+        if(! checkReserveSuccess(response))
+            return false;
 
-        int responseCode = response.getStatusLine().getStatusCode();
-        if(responseCode != 200) {
-            System.out.println("reserve fail!!");
-            return responseCode;
-        }
-        System.out.println("reserve success!!");
-        Header[] h_array = response.getAllHeaders();
-        for(Header header : h_array) {
-            System.out.println(header.toString());
-        }
-
-        return 200;
+        System.out.println("[reserve success]");
+        return true;
     }
+
+    public boolean checkReserveSuccess(CloseableHttpResponse response) throws IOException{
+        int responseCode = response.getStatusLine().getStatusCode();
+        if(responseCode != 200)
+            return false;
+
+        String line=null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        while((line = br.readLine()) != null) {
+            System.out.println(line);
+            if(line.contains("선택된 시설이 없습니다"))
+                return false;
+            else if (line.contains("해당시간에 예약이 불가합니다"))
+                return false;
+        }
+
+        return true;
+    }
+
 
     public HttpPost makeRequest() {
         HttpPost httpPost = new HttpPost(URL);

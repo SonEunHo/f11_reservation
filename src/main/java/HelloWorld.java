@@ -10,15 +10,7 @@ import java.net.URLEncoder;
  */
 public class HelloWorld {
     public static void main(String[] args) throws Exception{
-
-        String str="fc_qrno=컴퓨터학부";
-        byte[] t = str.getBytes("UTF-8");
-        String temp = new String(t);
-        System.out.println(temp);
-        System.out.println(t.length);
-        System.out.println(URLEncoder.encode(str,"UTF-8"));
-
-        LoginManager loginManager = new LoginManager("니들 아이디 입력해라", "니들 비밀번호 입력해라");
+        LoginManager loginManager = new LoginManager("니 아이디", "니 비밀번호");
 
         if( ! loginManager.login()){
             System.err.println("************[login fail]*************");
@@ -36,7 +28,9 @@ public class HelloWorld {
                 .date("2018-05-28")
                 .startHour(17)
                 .useHour(2);
-        reserveManager.reserve(builder.build().makeEntity(Field.FOOTSAL4));
+        boolean result = reserveManager.reserve(builder.build().makeEntity(Field.FOOTSAL4));
+        if(! result)
+            System.err.println("************[reserve fail]*************");
 
         /**
          * EXAMPLE 2

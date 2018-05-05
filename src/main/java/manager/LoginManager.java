@@ -1,5 +1,6 @@
 package manager;
 
+import com.sun.tools.javac.comp.Todo;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,19 +30,23 @@ public class LoginManager {
         this.PW = PW;
     }
 
-    public boolean login() throws UnsupportedEncodingException, IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = makeRequest();
+    //httpClient.close 는 할 필요 없어보인다.
+    public boolean login() {
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = makeRequest();
 
-        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-        if(!checkLoginSuccess(httpResponse))
+            CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+            if (!checkLoginSuccess(httpResponse))
+                return false;
+
+            System.out.println("[ login success ]");
+            parseCookie(httpResponse);
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
-
-        System.out.println("[ login success ]");
-        parseCookie(httpResponse);
-
-        httpClient.close();
-
+        }
         return true;
     }
 
@@ -79,7 +84,10 @@ public class LoginManager {
         return httpPost;
     }
 
-    public void parseCookie(HttpResponse httpResponse) throws IOException{
+    /**
+     * response에 들어있는 쿠키값을 꺼내서 저장
+     */
+    public void parseCookie(HttpResponse httpResponse) {
         Header[] h_array = httpResponse.getAllHeaders();
         for (Header header : h_array) {
             if(!header.toString().contains("Cookie"))

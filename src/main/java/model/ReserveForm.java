@@ -29,23 +29,24 @@ public class ReserveForm {
     //사용시간
     private String use_time;
 
+    //수정 ㄴㄴ
     private static final String FROM_URL = "/doc/class_info6_reserve.php";
     //신청자 이름(수정 필수)
-    private static final String APNT_PRSN_NM = "신청자 이름(ex.김명훈)";
+    private static final String APNT_PRSN_NM = "니 이름";
     //뭔진 모르지만 계속 1 (수정 ㄴㄴ)
     private static final String LCTN_DVCD = "1";
-    //학번 (수정 필수)
-    private static final String MEMB_ID = "2012105054";
-    //연락처(수정 필수)
-    private static final String HP_NO = "01052858268";
-    //학부(수정 필수)
+    //학번 (수정 필수) (ex 2012111222)
+    private static final String MEMB_ID = "니 학번";
+    //연락처(수정 필수) (ex 01012345678)
+    private static final String HP_NO = "니 전화번호";
+    //학부
     private static final String BLNG_NM="컴퓨터학부";
-    //신청자 학번(수정 필수)
-    private static final String EMNO="2016111111";
+    //신청자 학번(수정 필수) (ex 2012111222)
+    private static final String EMNO="니 학번";
     //사용 인원(수정 필수)
     private static final int USER_QTY= 11;
     //같이 차는 인원들(수정 필수)
-    private static final String USER_LIST="손은호 외 10명, 손종영, 성지원, 정문주, 최종현, 김정환, 이민재, 신재민, 박상현, 김명훈, 윤원철. 이상 총 11명";
+    private static final String USER_LIST="김명훈 외 10명, 손종영, 성지원, 정문주, 최종현, 김정환, 이민재, 신재민, 박상현, 우효원, 윤원철. 이상 총 11명";
     //행사 계획(수정 필수)
     private static final String EVNT_PLAN = "풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다. 풋살. 뒷정리 깔끔히 하겠습니다.";
 
