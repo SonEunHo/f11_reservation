@@ -19,13 +19,13 @@ public class HelloWorld {
         System.out.println(URLEncoder.encode(str,"UTF-8"));
 
         LoginManager loginManager = new LoginManager("니들 아이디 입력해라", "니들 비밀번호 입력해라");
-        int statusCode = loginManager.login();
 
-        if(statusCode!= 200)
+        if( ! loginManager.login()){
+            System.err.println("************[login fail]*************");
             return;
+        }
 
         ReserveManager reserveManager = new ReserveManager();
-
         /**
          * EXAMPLE 1
          * 족구장 옆 풋살장 예약하기.

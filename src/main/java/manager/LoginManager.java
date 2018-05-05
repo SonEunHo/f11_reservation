@@ -29,23 +29,34 @@ public class LoginManager {
         this.PW = PW;
     }
 
-    public int login() throws UnsupportedEncodingException, IOException {
+    public boolean login() throws UnsupportedEncodingException, IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = makeRequest();
 
         CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-
-        if( httpResponse.getStatusLine().getStatusCode() != RESPONSE_SUCCESS ){
-            System.err.println("login fail !!");
-            System.out.println("Check your account or network");
-            return httpResponse.getStatusLine().getStatusCode();
-        }
+        if(!checkLoginSuccess(httpResponse))
+            return false;
 
         System.out.println("[ login success ]");
         parseCookie(httpResponse);
+
         httpClient.close();
 
-        return RESPONSE_SUCCESS;
+        return true;
+    }
+
+    public boolean checkLoginSuccess(HttpResponse httpResponse) throws IOException{
+        if( httpResponse.getStatusLine().getStatusCode() != RESPONSE_SUCCESS )
+            return false;
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+        String line=null;
+        while ((line = reader.readLine()) != null) {
+            if(line.contains("아이디나 비밀번호가 틀렸습니다"))
+            return false;
+        }
+
+        return true;
     }
 
     public HttpPost makeRequest() throws UnsupportedEncodingException{
@@ -76,14 +87,7 @@ public class LoginManager {
             //Set-Cookie: PHPSESSID=jg6oi4qh5e8kn37knjjvl1boa3; path=/
             String cookie = header.toString().split(":")[1].split(";")[0].trim();
             CookieManager.add("PHPSESSID", cookie);
-            System.out.println("cookie:"+cookie);
             break;
-        }
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-        String line=null;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
         }
     }
 }
